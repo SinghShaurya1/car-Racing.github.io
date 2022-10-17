@@ -39,6 +39,11 @@ class Form {
       var name = this.input.value();
       var msg = "Hello " + name + ". Welcome to the game. waiting for other players to join...";
       this.greeting.html(msg);
+      player.name = name;
+      playerCount = playerCount + 1;
+      player.index = playerCount
+      player.addPlayer();
+      player.updateCount(playerCount);
     });
   }
 }

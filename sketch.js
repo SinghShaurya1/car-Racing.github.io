@@ -8,12 +8,16 @@ var playerCount;
 var gameState;
 let allPlayers = [];
 var car1, car2, cars;
+var powercoinImage, fuelImg;
+let powerCoins, fuels;
 
 function preload() {
   backgroundImage = loadImage("./assets/background.png");
   trackImg = loadImage('./assets/track.jpg')
   car1Img = loadImage('./assets/car1.png')
-  car2Img = loadImage('./assets/car2.png')
+  car2Img = loadImage('./assets/car2.png');
+  powercoinImage = loadImage('./assets/goldcoin.png')
+  fuelImg = loadImage('./assets/fuel.png')
 }
 
 function setup() {

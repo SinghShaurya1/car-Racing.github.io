@@ -21,7 +21,7 @@ class Player {
       'name': this.name,
       'positionX': this.positionX,
       'positionY': this.positionY,
-      'rank': this.rank, 
+      'rank': this.rank,
       'score': this.score,
       'fuel': this.fuel
     });
@@ -46,7 +46,7 @@ class Player {
       positionY: this.positionY,
       rank: this.rank,
       score: this.score,
-      fuel : this.fuel
+      fuel: this.fuel
     })
   }
   static getPlayerInfo() {

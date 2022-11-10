@@ -40,16 +40,40 @@ class Game {
 
     powerCoins = new Group();
     fuels = new Group();
+    obstacles = new Group();
+
+    var obstaclesPositions = [
+      { x: width / 2 + 250, y: height - 800, image: obstacle2Image },
+      { x: width / 2 - 250, y: height - 1600, image: obstacle2Image },
+      { x: width / 2 - 40, y: height - 1900, image: obstacle1Image },
+      { x: width / 2 + 180, y: height - 2400, image: obstacle1Image },
+      { x: width / 2, y: height - 3300, image: obstacle1Image },
+      { x: width / 2 - 180, y: height - 2800, image: obstacle2Image },
+      { x: width / 2 + 250, y: height - 3500, image: obstacle1Image },
+      { x: width / 2 - 150, y: height - 3800, image: obstacle2Image },
+      { x: width / 2, y: height - 4400, image: obstacle1Image },
+      { x: width / 2 + 180, y: height - 4800, image: obstacle2Image },
+      { x: width / 2 - 250, y: height - 5200, image: obstacle2Image },
+      { x: width / 2 + 250, y: height - 5700, image: obstacle1Image },
+    ]
 
     this.addSprites(powerCoins, 18, powercoinImage, 0.08);
     this.addSprites(fuels, 5, fuelImg, 0.02);
+    this.addSprites(obstacles, obstaclesPositions.length, obstacle1Image, 0.04, obstaclesPositions);
   }
 
-  addSprites(spriteGroup, numberOfSprites, spritesImage, scale) {
+  addSprites(spriteGroup, numberOfSprites, spritesImage, scale, positions = []) {
     for (var i = 0; i < numberOfSprites; i++) {
       var x, y;
-      x = random(width / 2 + 150, width / 2 - 150);
-      y = random(-height * 4.5, height - 400);
+      if (positions.length > 0) {
+        x = positions[i].x;
+        y = positions[i].y;
+        spritesImage = positions[i].image
+      }
+      else {
+        x = random(width / 2 + 150, width / 2 - 150);
+        y = random(-height * 4.5, height - 400);
+      }
       var sprite = createSprite(x, y);
       sprite.addImage("sprite", spritesImage);
       sprite.scale = scale;
@@ -113,8 +137,6 @@ class Game {
     Player.getPlayerInfo();
     if (allPlayers !== undefined) {
       image(trackImg, 0, -height * 5, width, height * 6);
-
-
       var index = 0;
       for (var plr in allPlayers) {
 
@@ -131,6 +153,7 @@ class Game {
           ellipse(x, y, 60, 60);
           this.handlePowerCoins(player.index);
           this.handleFuels(player.index);
+          this.handleObstacleCollision(player.index);
           camera.position.y = cars[index].position.y;
         }
 
@@ -140,7 +163,17 @@ class Game {
       }
 
       this.handlePlayerControls();
-      //this.showLeaderBoard();
+     
+      this.showFuelBar()
+
+      var finishLine = height * 6 -1000;
+      if((player.positionY * -1) > finishLine){
+        console.log("crossed finish line...")
+        gameState = 2;
+        player.rank += 1;
+        player.update();
+        this.showRank();
+      }
 
       drawSprites();
     }
@@ -180,8 +213,46 @@ class Game {
       collected.remove();
     });
   }
-  end() {
+  handleObstacleCollision(index){
+    if(cars[index - 1].collide(obstacles)){
+      gameState = 2;
+      player.fuel = 0;
+      player.update();
+    }
+  }
+  gameOver(){
+    swal({
+      title: `Game Over`,
+      text: "Oops you lost the race....!!",
+      imageUrl: "https://cdn.shopify.com/s/files/1/1061/1924/products/Thumbs_Down_Sign_Emoji_Icon_ios10_grande.png",
+      imageSize: "100x100",
+      confirmButtonText: "Thanks for Playing"
+    })
+  }
+  showFuelBar(){
+    push();
+    image(fuelImage, 230, height - player.positionY, 20, 20);
+    fill("white");
+    rect(200, height - player.positionY, 185, 20 );
+    fill ("red");
+    rect(200, height - player.positionY, player.fuel, 20 );
+    pop();
+  }
 
+  showRank(){
+    swal({
+      title: `Awsome! Rank ${player.rank}`,
+      text: "You successfully reached the finishing line",
+      imageUrl:"https://raw.githubusercontent.com/vishalgaddam873/p5-multiplayer-car-race-game/master/assets/cup.png",
+      imageSize: "100x100",
+      confirmButtonText: "OK"
+      
+    })
+  }
+  end() {
+   if(player.fuel == 0){
+      this.gameOver();
+   }
   }
 
 }
